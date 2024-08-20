@@ -1,12 +1,24 @@
 import express from 'express';
 import {Request,Response} from 'express';
 import { request } from 'http';
-import cors from 'cors'
+import cors from 'cors';
+import {ethers} from 'ethers';
 
 const app = express()
 const port = 3333;
 app.use(express.json())
 app.use(cors())
+
+app.get('/api/balanceEthers/:address', async (req: Request, res:Response) => {
+    const {address} = req.params;
+    const provider = new ethers.JsonRpcProvider('http://localhost:5556');
+    const balance = await provider.getBalance(address);
+    res.json({
+        address,balance:Number(balance)/10**18, date: new Date().toISOString()
+    })
+
+})
+
 
 app.get('/api/balance/:address', async (req: Request, res:Response) => {
     const {address} = req.params;
