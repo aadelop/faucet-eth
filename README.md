@@ -20,7 +20,7 @@ Before starting, ensure you have the following tools installed:
 1. Go to node directory
 
 ```bash
-   cd  node
+   cd  nodo
 ```
 
 2. Create address account that will use genesis node
