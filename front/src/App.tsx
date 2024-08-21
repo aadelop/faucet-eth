@@ -1,43 +1,53 @@
 import { Button } from "@/components/ui/button"
-import { useEffect, useState } from "react"
+import {createBrowserRouter, Link, Outlet, RouterProvider} from 'react-router-dom'
 
-type Data = {
-  jsonrpc: string
-  id: number
-  result: string
-}
+ export function Home(){
+    return <div>Home</div>
+ }
+ export function Faucet(){
+  return <div>Faucet</div>
+ }
+ export function Balance(){
+  return <div>Balance</div>
+ }
+ export function Transfer(){
+  return <div>Transfer</div>
+ }
+ export function Header(){
+  return <div className="flex gap-2">
+    <Link to='home'><Button>Home</Button></Link>
+    <Link to='faucet'><Button>Faucet</Button></Link>
+    <Link to='balance'><Button>Balance</Button></Link>
+    <Link to='transfer'><Button>Transfer</Button></Link>
 
-export default function Home() {
+  </div>
+ }
 
-  const [data, setData] = useState<Data | null>(null)
+ export function Dashboard(){
+  return <div>
+    <Header />
+    <h1 className="text-xl">Dashboard</h1>
+    <Outlet />
+  </div>
+ }
 
-  useEffect(() => {
-    fetch('http://localhost:5556',{
-      method:'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        jsonrpc: '2.0',
-        method: 'eth_getBalance',
-        params: [
-          '0xc9958ed67E5196b8d99cC3C3a0B83f832c5EFB9a',
-          'latest'
-        ],
-        id: 1
-      })
-    })
-    .then(res => res.json())
-    .then(setData)
-    .catch(console.error)
-   
-  }, [])
 
-  if(!data) return <div>Loading...</div>
+const router = createBrowserRouter([
+  { path: '/',
+    element: <Dashboard />,
+    children:[
+      {path:'home', element:<Home />},
+      {path:'faucet', element:<Faucet />},
+      {path:'balance', element:<Balance />},
+      {path:'transfer', element:<Transfer />}
+    ]
 
+  }
+])
+
+export default function App() {
   return (
-    <div>
-      {Number(data.result)/10**18}
-    </div>
+    <RouterProvider router={router}/>
   )
+ 
 }
