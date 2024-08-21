@@ -3,11 +3,32 @@ import {Request,Response} from 'express';
 import { request } from 'http';
 import cors from 'cors';
 import {ethers} from 'ethers';
+import fs from 'fs';
 
 const app = express()
 const port = 3333;
 app.use(express.json())
 app.use(cors())
+
+app.get('/api/faucet/:address/:amount', async (req: Request, res:Response) => {
+    const {address, amount} = req.params
+    const provider = new ethers.JsonRpcProvider('http://localhost:5556/')
+    const ruta = "../nodo/datos/keystore/UTC--2024-08-19T15-57-32.241452135Z--d847bfdf435d33bd4ff64f8d61f5a9cda0672cf0"
+    const rutaData = fs.readFileSync(ruta, "utf8");
+    const wallet = await ethers.Wallet.fromEncryptedJson(rutaData, "123456")
+    const walletConnected = wallet.connect(provider)
+    const tx = await walletConnected.sendTransaction({
+        to:address,
+        value: ethers.parseEther(amount)
+    })
+    await tx.wait()
+    const balance = await provider.getBalance(address)
+    console.log("balance", balance.toString());
+
+    res.json({address, amount, balance: Number(balance)/10 ** 18, fecha: new Date().toISOString() })
+})
+
+
 
 app.get('/api/balanceEthers/:address', async (req: Request, res:Response) => {
     const {address} = req.params;
