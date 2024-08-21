@@ -5,6 +5,7 @@ import cors from 'cors';
 import {ethers} from 'ethers';
 import fs from 'fs';
 
+require('dotenv').config();
 const app = express()
 const port = 3333;
 app.use(express.json())
@@ -12,10 +13,10 @@ app.use(cors())
 
 app.get('/api/faucet/:address/:amount', async (req: Request, res:Response) => {
     const {address, amount} = req.params
-    const provider = new ethers.JsonRpcProvider('http://localhost:5556/')
-    const ruta = "../nodo/datos/keystore/UTC--2024-08-19T15-57-32.241452135Z--d847bfdf435d33bd4ff64f8d61f5a9cda0672cf0"
+    const provider = new ethers.JsonRpcProvider(process.env.URL_NODO)
+    const ruta = process.env.KEYSTORE_FILE as string;
     const rutaData = fs.readFileSync(ruta, "utf8");
-    const wallet = await ethers.Wallet.fromEncryptedJson(rutaData, "123456")
+    const wallet = await ethers.Wallet.fromEncryptedJson(rutaData, process.env.KEYSTORE_PWD as string)
     const walletConnected = wallet.connect(provider)
     const tx = await walletConnected.sendTransaction({
         to:address,
@@ -32,7 +33,7 @@ app.get('/api/faucet/:address/:amount', async (req: Request, res:Response) => {
 
 app.get('/api/balanceEthers/:address', async (req: Request, res:Response) => {
     const {address} = req.params;
-    const provider = new ethers.JsonRpcProvider('http://localhost:5556');
+    const provider = new ethers.JsonRpcProvider(process.env.URL_NODO);
     const balance = await provider.getBalance(address);
     res.json({
         address,balance:Number(balance)/10**18, date: new Date().toISOString()
@@ -43,7 +44,7 @@ app.get('/api/balanceEthers/:address', async (req: Request, res:Response) => {
 
 app.get('/api/balance/:address', async (req: Request, res:Response) => {
     const {address} = req.params;
-    const freturn = await fetch('http://localhost:5556',{
+    const freturn = await fetch(process.env.URL_NODO as string,{
         method:'POST',
         headers: { 
           'Content-Type': 'application/json'
