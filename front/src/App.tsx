@@ -4,6 +4,7 @@ import { Home } from './components/Home.tsx';
 import { Faucet } from './components/Faucet.tsx';
 import { Balance } from './components/Balance.tsx';
 import { Transfer } from './components/Transfer.tsx';
+import {createContext, useState} from 'react';
 
 const router = createBrowserRouter([
   { path: '/',
@@ -18,9 +19,17 @@ const router = createBrowserRouter([
   }
 ])
 
+export const UserContext = createContext({});
+
+
 export default function App() {
-  return (
-    <RouterProvider router={router}/>
-  )
+  const [state, setState] = useState({
+    acc:"xxxxxxx",
+  });
+  return <UserContext.Provider value={{state, setState}}>
+            <RouterProvider router={router}/>
+         </UserContext.Provider>
+    
+  
  
 }
