@@ -1,36 +1,9 @@
-import { Button } from "@/components/ui/button"
-import {createBrowserRouter, Link, Outlet, RouterProvider} from 'react-router-dom'
-
- export function Home(){
-    return <div>Home</div>
- }
- export function Faucet(){
-  return <div>Faucet</div>
- }
- export function Balance(){
-  return <div>Balance</div>
- }
- export function Transfer(){
-  return <div>Transfer</div>
- }
- export function Header(){
-  return <div className="flex gap-2">
-    <Link to='home'><Button>Home</Button></Link>
-    <Link to='faucet'><Button>Faucet</Button></Link>
-    <Link to='balance'><Button>Balance</Button></Link>
-    <Link to='transfer'><Button>Transfer</Button></Link>
-
-  </div>
- }
-
- export function Dashboard(){
-  return <div>
-    <Header />
-    <h1 className="text-xl">Dashboard</h1>
-    <Outlet />
-  </div>
- }
-
+import {createBrowserRouter, RouterProvider} from 'react-router-dom'
+import {Dashboard} from './components/Dashboard.tsx';
+import { Home } from './components/Home.tsx';
+import { Faucet } from './components/Faucet.tsx';
+import { Balance } from './components/Balance.tsx';
+import { Transfer } from './components/Transfer.tsx';
 
 const router = createBrowserRouter([
   { path: '/',
