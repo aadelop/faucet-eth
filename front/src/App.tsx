@@ -24,7 +24,7 @@ export const UserContext = createContext({});
 
 export default function App() {
   const [state, setState] = useState({
-    acc:"xxxxxxx",
+    acc:"",
   });
   return <UserContext.Provider value={{state, setState}}>
             <RouterProvider router={router}/>
