@@ -26,7 +26,7 @@ app.get('/api/faucet/:address/:amount', async (req: Request, res:Response) => {
     const balance = await provider.getBalance(address)
     console.log("balance", balance.toString());
 
-    res.json({address, amount, balance: Number(balance)/10 ** 18, fecha: new Date().toISOString() })
+    res.json({tx, address, amount, balance: Number(balance)/10 ** 18, fecha: new Date().toISOString() })
 })
 
 
