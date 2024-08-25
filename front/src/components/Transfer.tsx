@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {useForm} from 'react-hook-form';
 import { Button } from './ui/button';
+import {ethers} from 'ethers';
 import {
     Form,
     FormControl,
@@ -11,17 +13,30 @@ import {
   } from "@/components/ui/form";
 
 import { Input } from "@/components/ui/input"
+import { useState } from 'react';
+import { Loader2 } from 'lucide-react';
 
 export function Transfer(){
+    const [loading, setLoading] = useState(false);
+    const [tx, setTx] = useState<object | null>(null);
     const form = useForm({
         defaultValues:{
-            from:"0x2hf648hfgs",
-            to:"0x0858yftd",
+            from:"0x002457ee9c7d1118d254d3e21f555d85ee2df3b3",
+            to:"0xc9958ed67E5196b8d99cC3C3a0B83f832c5EFB9a",
             amount: 0
         }
     });
-    const onSubmit = (data:any) =>{
-        console.log(data);
+    const onSubmit = async (data: any) =>{
+        setLoading(true)
+        const provider = new ethers.BrowserProvider(window.ethereum)
+        const signer = await provider.getSigner(data.from)
+        const t = await signer.sendTransaction({
+            to:data.to,
+            value: ethers.parseEther(data.amount.toString())
+        })
+        const tx = await t.wait();
+        setTx({tx,t,data})
+        setLoading(false)
     }
     return <div className="space-y-4 mt-3">
                 <h1 className="text-xl font-bold" >Transfer</h1>
@@ -76,9 +91,18 @@ export function Transfer(){
                             </FormItem>
                         )}
                         />
-                    <Button type="submit">Transfer</Button>
+                    <Button type="submit">
+                        <Loader2  size={16} className={loading ? "animate-spin" : "hidden"} />
+                        Transfer</Button>
                     </form>
-               
                 </Form>
+                {
+                    tx &&(
+                        <div>
+                            <h2> Successfull transaction</h2>
+                            <pre>{JSON.stringify(tx,null,4)}</pre>
+                        </div>
+                    )
+                }
     </div>
 }
